@@ -4,115 +4,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Moonlit Rose | Moon Cycle</title>
+<title>Moonlit Rose | Moon Phase</title>
+
 <style>
   * { box-sizing: border-box; }
 
   body {
     margin: 0;
-    background: #F4F1EC;
-    color: #775967;
+    background: #775967;
+    color: #F4F1EC;
     font-family: Georgia, serif;
   }
 
   .widget {
-    width: 100%;
-    padding: 22px 12px;
-    text-align: center;
-  }
-
-  .heading {
-    color: #B28F95;
-    font-size: 12px;
-    letter-spacing: 3px;
-    margin-bottom: 20px;
-  }
-
-  .moons {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    gap: 2px;
+    gap: 16px;
+    padding: 18px 16px;
+    width: 100%;
+    min-height: 124px;
   }
 
-  .moon {
-    flex: 1;
+  .moon-art {
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+  }
+
+  .details {
     min-width: 0;
-    font-size: clamp(19px, 5vw, 31px);
-    line-height: 1.5;
-    border-radius: 50%;
-    opacity: 0.65;
-  }
-
-  .moon.active {
-    background: #DDC6C4;
-    opacity: 1;
+    flex: 1;
   }
 
   .phase {
-    margin-top: 20px;
-    font-size: 21px;
+    font-size: clamp(17px, 5vw, 22px);
+    line-height: 1.2;
+    margin-bottom: 10px;
   }
 
   .illumination {
-    margin-top: 6px;
-    color: #87838F;
-    font-size: 13px;
+    color: #DDC6C4;
+    font-size: 14px;
   }
 
-  .divider {
-    height: 1px;
-    background: #DDC6C4;
-    width: 70%;
-    margin: 18px auto 12px;
+  .signature {
+    color: #D4CDD0;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-top: 12px;
   }
 
-  .footer {
-    font-size: 12px;
-    font-style: italic;
-    color: #B28F95;
+  @media (max-width: 260px) {
+    .widget { gap: 10px; padding: 14px 10px; }
+    .moon-art { width: 68px; height: 68px; }
+    .phase { font-size: 16px; }
+    .illumination { font-size: 12px; }
   }
 </style>
 </head>
+
 <body>
-
 <div class="widget">
-  <div class="heading">✧ MOON CYCLE ✧</div>
 
-  <div class="moons" id="moons">
-    <div class="moon">🌒</div>
-    <div class="moon">🌓</div>
-    <div class="moon">🌔</div>
-    <div class="moon">🌕</div>
-    <div class="moon">🌖</div>
-    <div class="moon">🌗</div>
-    <div class="moon">🌘</div>
+  <svg class="moon-art" viewBox="0 0 100 100"
+       role="img" aria-label="Current moon phase">
+    <defs>
+      <radialGradient id="moonSurface"
+        cx="65%" cy="35%" r="70%">
+        <stop offset="0%" stop-color="#F4F1EC"/>
+        <stop offset="70%" stop-color="#D9DDE0"/>
+        <stop offset="100%" stop-color="#87838F"/>
+      </radialGradient>
+
+      <clipPath id="moonCircle">
+        <circle cx="50" cy="50" r="44"/>
+      </clipPath>
+
+      <mask id="lightMask"
+        maskUnits="userSpaceOnUse"
+        x="0" y="0" width="100" height="100">
+        <rect width="100" height="100" fill="black"/>
+        <path id="litShape" fill="white"/>
+      </mask>
+    </defs>
+
+    <!-- Dark lunar disk -->
+    <circle cx="50" cy="50" r="44" fill="#30252F"/>
+
+    <!-- Illuminated lunar surface -->
+    <g mask="url(#lightMask)" clip-path="url(#moonCircle)">
+      <circle cx="50" cy="50" r="44"
+              fill="url(#moonSurface)"/>
+
+      <!-- Subtle lunar texture -->
+      <g fill="#87838F" opacity="0.28">
+        <circle cx="66" cy="30" r="12"/>
+        <circle cx="39" cy="40" r="7"/>
+        <circle cx="70" cy="68" r="14"/>
+        <circle cx="43" cy="70" r="10"/>
+        <circle cx="56" cy="52" r="5"/>
+        <circle cx="28" cy="60" r="6"/>
+      </g>
+
+      <g fill="#F4F1EC" opacity="0.22">
+        <circle cx="62" cy="28" r="5"/>
+        <circle cx="72" cy="66" r="6"/>
+        <circle cx="43" cy="69" r="4"/>
+      </g>
+    </g>
+  </svg>
+
+  <div class="details">
+    <div class="phase" id="phase">Moon Phase</div>
+    <div class="illumination" id="illumination">
+      Calculating illumination...
+    </div>
+    <div class="signature">☾ Moonlit Rose</div>
   </div>
 
-  <div class="phase" id="phase">Moon Phase</div>
-  <div class="illumination" id="illumination"></div>
-
-  <div class="divider"></div>
-  <div class="footer">As above, so below ♡</div>
 </div>
 
 <script>
-  // Approximate lunar cycle calculation.
+  // Approximate lunar cycle.
   const SYNODIC_MONTH = 29.530588853;
-
-  // Known new moon reference (UTC).
-  const REFERENCE =
-    Date.UTC(2000, 0, 6, 18, 14);
+  const REFERENCE = Date.UTC(2000, 0, 6, 18, 14);
 
   function updateMoon() {
-    const now = Date.now();
-
     const elapsedDays =
-      (now - REFERENCE) / 86400000;
+      (Date.now() - REFERENCE) / 86400000;
 
     const age =
       ((elapsedDays % SYNODIC_MONTH) +
-       SYNODIC_MONTH) % SYNODIC_MONTH;
+        SYNODIC_MONTH) % SYNODIC_MONTH;
 
     const fraction = age / SYNODIC_MONTH;
 
@@ -130,7 +153,8 @@
       "Waning Crescent"
     ];
 
-    let index = Math.floor(fraction * 8 + 0.5) % 8;
+    const index =
+      Math.floor(fraction * 8 + 0.5) % 8;
 
     document.getElementById("phase").textContent =
       names[index];
@@ -139,23 +163,61 @@
       Math.round(illumination * 100) +
       "% illumination";
 
-    // Seven illustrated phases:
-    // New Moon has no separate icon in this strip.
-    const moonIndex = index - 1;
+    // Draw the illuminated portion of the moon.
+    const radius = 44;
+    const cx = 50;
+    const cy = 50;
 
-    document.querySelectorAll(".moon").forEach(
-      (moon, i) => {
-        moon.classList.toggle(
-          "active",
-          i === moonIndex
-        );
-      }
-    );
+    const waxing = fraction < 0.5;
+
+    // Terminator position determines the crescent
+    // or gibbous shape.
+    const terminator =
+      Math.cos(2 * Math.PI * fraction);
+
+    const points = [];
+
+    // Right edge for waxing, left edge for waning.
+    for (let i = 0; i <= 100; i++) {
+      const angle =
+        -Math.PI / 2 + Math.PI * i / 100;
+
+      const x = cx +
+        (waxing ? 1 : -1) *
+        radius * Math.cos(angle);
+
+      const y = cy + radius * Math.sin(angle);
+
+      points.push([x, y]);
+    }
+
+    // Return along the illuminated boundary.
+    for (let i = 100; i >= 0; i--) {
+      const angle =
+        -Math.PI / 2 + Math.PI * i / 100;
+
+      const x = cx +
+        (waxing ? -1 : 1) *
+        radius * terminator * Math.cos(angle);
+
+      const y = cy + radius * Math.sin(angle);
+
+      points.push([x, y]);
+    }
+
+    const path = points.map((point, i) =>
+      (i === 0 ? "M" : "L") +
+      point[0].toFixed(2) + "," +
+      point[1].toFixed(2)
+    ).join(" ") + " Z";
+
+    document.getElementById("litShape")
+      .setAttribute("d", path);
   }
 
   updateMoon();
   setInterval(updateMoon, 60 * 60 * 1000);
 </script>
-
 </body>
 </html>
+
