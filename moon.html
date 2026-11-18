@@ -1,0 +1,161 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moonlit Rose | Moon Cycle</title>
+<style>
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: #F4F1EC;
+    color: #775967;
+    font-family: Georgia, serif;
+  }
+
+  .widget {
+    width: 100%;
+    padding: 22px 12px;
+    text-align: center;
+  }
+
+  .heading {
+    color: #B28F95;
+    font-size: 12px;
+    letter-spacing: 3px;
+    margin-bottom: 20px;
+  }
+
+  .moons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .moon {
+    flex: 1;
+    min-width: 0;
+    font-size: clamp(19px, 5vw, 31px);
+    line-height: 1.5;
+    border-radius: 50%;
+    opacity: 0.65;
+  }
+
+  .moon.active {
+    background: #DDC6C4;
+    opacity: 1;
+  }
+
+  .phase {
+    margin-top: 20px;
+    font-size: 21px;
+  }
+
+  .illumination {
+    margin-top: 6px;
+    color: #87838F;
+    font-size: 13px;
+  }
+
+  .divider {
+    height: 1px;
+    background: #DDC6C4;
+    width: 70%;
+    margin: 18px auto 12px;
+  }
+
+  .footer {
+    font-size: 12px;
+    font-style: italic;
+    color: #B28F95;
+  }
+</style>
+</head>
+<body>
+
+<div class="widget">
+  <div class="heading">✧ MOON CYCLE ✧</div>
+
+  <div class="moons" id="moons">
+    <div class="moon">🌒</div>
+    <div class="moon">🌓</div>
+    <div class="moon">🌔</div>
+    <div class="moon">🌕</div>
+    <div class="moon">🌖</div>
+    <div class="moon">🌗</div>
+    <div class="moon">🌘</div>
+  </div>
+
+  <div class="phase" id="phase">Moon Phase</div>
+  <div class="illumination" id="illumination"></div>
+
+  <div class="divider"></div>
+  <div class="footer">As above, so below ♡</div>
+</div>
+
+<script>
+  // Approximate lunar cycle calculation.
+  const SYNODIC_MONTH = 29.530588853;
+
+  // Known new moon reference (UTC).
+  const REFERENCE =
+    Date.UTC(2000, 0, 6, 18, 14);
+
+  function updateMoon() {
+    const now = Date.now();
+
+    const elapsedDays =
+      (now - REFERENCE) / 86400000;
+
+    const age =
+      ((elapsedDays % SYNODIC_MONTH) +
+       SYNODIC_MONTH) % SYNODIC_MONTH;
+
+    const fraction = age / SYNODIC_MONTH;
+
+    const illumination =
+      (1 - Math.cos(2 * Math.PI * fraction)) / 2;
+
+    const names = [
+      "New Moon",
+      "Waxing Crescent",
+      "First Quarter",
+      "Waxing Gibbous",
+      "Full Moon",
+      "Waning Gibbous",
+      "Last Quarter",
+      "Waning Crescent"
+    ];
+
+    let index = Math.floor(fraction * 8 + 0.5) % 8;
+
+    document.getElementById("phase").textContent =
+      names[index];
+
+    document.getElementById("illumination").textContent =
+      Math.round(illumination * 100) +
+      "% illumination";
+
+    // Seven illustrated phases:
+    // New Moon has no separate icon in this strip.
+    const moonIndex = index - 1;
+
+    document.querySelectorAll(".moon").forEach(
+      (moon, i) => {
+        moon.classList.toggle(
+          "active",
+          i === moonIndex
+        );
+      }
+    );
+  }
+
+  updateMoon();
+  setInterval(updateMoon, 60 * 60 * 1000);
+</script>
+
+</body>
+</html>
