@@ -2,125 +2,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Moonlit Rose Weather</title>
-<style>
-  * { box-sizing: border-box; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moonlit Rose | Rose Garden Weather</title>
 
-  body {
-    margin: 0;
-    background: #F4F1EC;
-    color: #775967;
-    font-family: Georgia, serif;
-  }
+  <style>
+    * { box-sizing: border-box; }
 
-  .widget {
-    padding: 24px 16px;
-    text-align: center;
-  }
-
-  .heading {
-    color: #B28F95;
-    font-size: 13px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-  }
-
-  .icon {
-    font-size: 48px;
-    margin: 15px 0 5px;
-  }
-
-  .temperature {
-    font-size: 54px;
-    line-height: 1.2;
-  }
-
-  .condition {
-    font-size: 16px;
-    margin-top: 8px;
-  }
-
-  .divider {
-    height: 1px;
-    width: 75%;
-    background: #DDC6C4;
-    margin: 20px auto 14px;
-  }
-
-  .location {
-    color: #87838F;
-    font-size: 13px;
-  }
-</style>
-</head>
-<body>
-
-<div class="widget">
-  <div class="heading">☾ Today's Weather</div>
-  <div class="icon" id="icon">☁</div>
-  <div class="temperature" id="temperature">--°</div>
-  <div class="condition" id="condition">
-    Loading weather...
-  </div>
-  <div class="divider"></div>
-  <div class="location" id="location"></div>
-</div>
-
-<script>
-  // Change these three values for your city.
-  const CITY = "Bogotá";
-  const LATITUDE = 4.7110;
-  const LONGITUDE = -74.0721;
-
-  document.getElementById("location").textContent = CITY;
-
-  function weatherDescription(code, isDay) {
-    if (code === 0) return ["Clear sky", isDay ? "☀️" : "☾"];
-    if (code <= 3) return ["Partly cloudy", "⛅"];
-    if (code <= 48) return ["Foggy", "☁️"];
-    if (code <= 67) return ["Rainy", "🌧️"];
-    if (code <= 77) return ["Snowy", "❄️"];
-    if (code <= 82) return ["Rain showers", "🌦️"];
-    if (code <= 86) return ["Snow showers", "❄️"];
-    if (code >= 95) return ["Thunderstorms", "⛈️"];
-    return ["Cloudy", "☁️"];
-  }
-
-  async function updateWeather() {
-    const url =
-      "https://api.open-meteo.com/v1/forecast" +
-      "?latitude=" + LATITUDE +
-      "&longitude=" + LONGITUDE +
-      "&current=temperature_2m,weather_code,is_day" +
-      "&temperature_unit=celsius";
-
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error("Weather unavailable");
-
-      const data = await response.json();
-      const current = data.current;
-
-      const [description, icon] =
-        weatherDescription(current.weather_code, current.is_day === 1);
-
-      document.getElementById("temperature").textContent =
-        Math.round(current.temperature_2m) + "°C";
-
-      document.getElementById("condition").textContent = description;
-      document.getElementById("icon").textContent = icon;
-    } catch (error) {
-      document.getElementById("condition").textContent =
-        "Weather temporarily unavailable";
-      document.getElementById("icon").textContent = "☁";
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
     }
-  }
 
-  updateWeather();
-  setInterval(updateWeather, 15 * 60 * 1000);
-</script>
+    body {
+      background: #F4F1EC;
+      color: #775967;
+      font-family: Georgia, "Times New Roman", serif;
+    }
 
+    .widget {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+      min-height: 112px;
+      padding: 12px 14px;
+      overflow: hidden;
+    }
+
+    .details {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .eyebrow {
+      color: #B28F95;
+      font-family: Arial, sans-serif;
+      font-size: 9px;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      margin-bottom: 9px;
+    }
+
+    .weather-line {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .temperature {
+      color: #775967;
+      font-size: 39px;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .condition {
+      color: #775967;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .message {
+      margin-top: 12px;
+      color: #B28F95;
+      font-size: 11px;
+      font-style: italic;
+    }
+
+    .flower {
+      width: 67px;
+      height: 89px;
+      flex-shrink: 0;
+    }
+
+    @media (max-width: 260px) {
+      .widget { padding: 10px; gap: 5px; }
+      .temperature { font-size: 33px; }
+      .condition { font-size: 11px; }
+      .flower { width: 53px; height: 75px; }
+      .message { font-size: 10px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="widget">
+    <div class="details">
+      <div class="eyebrow">✧ A LITTLE WEATHER NOTE</div>
+
+      <div class="weather-line">
+        <span class="temperature" id="temperature">--°</span>
+        <span class="condition" id="condition">Loading...</span>
+      </div>
+
+      <div class="message">
+        today feels like a daydream ♡
+      </div>
+    </div>
+
+    <svg class="flower" viewBox="0 0 75 95"
+         xmlns="http://www.w3.org/2000/svg"
+         aria-hidden="true">
+
+      <!-- Stems -->
+      <g fill="none" stroke="#B28F95"
+         stroke-width="1.4" stroke-linecap="round">
+        <path d="M37 90 Q46 60 35 30"/>
+        <path d="M41 72 Q60 63 62 47"/>
+        <path d="M38 59 Q20 50 15 37"/>
+      </g>
+
+      <!-- Flower petals -->
+      <g fill="#DDC6C4" stroke="#B28F95"
+         stroke-width="1.1">
+        <ellipse cx="35" cy="25" rx="10" ry="17"
+                 transform="rotate(-20 35 25)"/>
+        <ellipse cx="45" cy="26" rx="10" ry="16"
+                 transform="rotate(25 45 26)"/>
+        <ellipse cx="39" cy="33" rx="12" ry="11"/>
+      </g>
+
+      <circle cx="39" cy="30" r="5" fill="#775967"/>
+
+      <!-- Leaves -->
+      <g fill="#B28F95" opacity="0.7">
+        <ellipse cx="59" cy="53" rx="5" ry="11"
+                 transform="rotate(38 59 53)"/>
+        <ellipse cx="17" cy="42" rx="5" ry="11"
+                 transform="rotate(-35 17 42)"/>
+      </g>
+    </svg>
+  </div>
+
+  <script>
+    // Bogotá coordinates, matching your existing widget.
+    const LATITUDE = 4.7110;
+    const LONGITUDE = -74.0721;
+
+    function describeWeather(code) {
+      if (code === 0) return "Clear sky";
+      if (code === 1) return "Mostly clear";
+      if (code === 2) return "Partly cloudy";
+      if (code === 3) return "Cloudy";
+      if (code === 45 || code === 48) return "Misty";
+      if (code >= 51 && code <= 57) return "Drizzle";
+      if (code >= 61 && code <= 67) return "Rainy";
+      if (code >= 71 && code <= 77) return "Snowy";
+      if (code >= 80 && code <= 82) return "Rain showers";
+      if (code >= 85 && code <= 86) return "Snow showers";
+      if (code >= 95) return "Thunderstorms";
+      return "Changing skies";
+    }
+
+    async function updateWeather() {
+      const temperature =
+        document.getElementById("temperature");
+      const condition =
+        document.getElementById("condition");
+
+      const url =
+        "https://api.open-meteo.com/v1/forecast" +
+        "?latitude=" + LATITUDE +
+        "&longitude=" + LONGITUDE +
+        "&current=temperature_2m,weather_code" +
+        "&temperature_unit=celsius" +
+        "&timezone=America%2FBogota";
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error("Weather service unavailable");
+        }
+
+        const data = await response.json();
+        const current = data.current;
+
+        if (!current ||
+            !Number.isFinite(current.temperature_2m)) {
+          throw new Error("Invalid weather data");
+        }
+
+        temperature.textContent =
+          Math.round(current.temperature_2m) + "°";
+
+        condition.textContent =
+          describeWeather(current.weather_code);
+
+      } catch (error) {
+        temperature.textContent = "--°";
+        condition.textContent = "Weather unavailable";
+        console.error(error);
+      }
+    }
+
+    updateWeather();
+
+    // Refresh weather every 15 minutes.
+    setInterval(updateWeather, 15 * 60 * 1000);
+  </script>
 </body>
 </html>
+
