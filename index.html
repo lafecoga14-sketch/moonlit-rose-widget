@@ -1,0 +1,90 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Moonlit Rose Date</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 12px;
+      background: #F4F1EC;
+      font-family: Georgia, serif;
+      color: #775967;
+    }
+
+    .widget {
+      width: 100%;
+      text-align: center;
+      padding: 18px 12px;
+    }
+
+    .weekday {
+      color: #B28F95;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+    }
+
+    .day {
+      font-size: 76px;
+      line-height: 1.2;
+      margin: 10px 0;
+    }
+
+    .month {
+      font-size: 19px;
+    }
+
+    .divider {
+      height: 1px;
+      background: #DDC6C4;
+      margin: 22px auto 16px;
+      width: 75%;
+    }
+
+    .quote {
+      font-size: 13px;
+      font-style: italic;
+      color: #87838F;
+    }
+  </style>
+</head>
+<body>
+  <div class="widget">
+    <div class="weekday" id="weekday"></div>
+    <div class="day" id="day"></div>
+    <div class="month" id="month"></div>
+    <div class="divider"></div>
+    <div class="quote">A gentle beginning ♡</div>
+  </div>
+
+  <script>
+    function updateDate() {
+      const now = new Date();
+
+      document.getElementById("weekday").textContent =
+        "☾ " + new Intl.DateTimeFormat("en", {
+          weekday: "long"
+        }).format(now);
+
+      document.getElementById("day").textContent =
+        new Intl.DateTimeFormat("en", {
+          day: "numeric"
+        }).format(now);
+
+      document.getElementById("month").textContent =
+        new Intl.DateTimeFormat("en", {
+          month: "long",
+          year: "numeric"
+        }).format(now);
+    }
+
+    updateDate();
+    setInterval(updateDate, 60000);
+  </script>
+</body>
+</html>
